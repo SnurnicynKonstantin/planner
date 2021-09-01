@@ -1,0 +1,2 @@
+postgres: jdbc:postgresql://192.168.35.8/planner
+host: http://192.168.35.7/

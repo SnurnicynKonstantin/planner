@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+
+<ruleset name="Basic"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+    <description>
+        The Basic ruleset contains a collection of good practices which should be followed.
+    </description>
+    <rule ref="category/java/bestpractices.xml">
+        <exclude name="MethodReturnsInternalArray"></exclude>
+        <exclude name="ArrayIsStoredDirectly"></exclude>
+        <exclude name="JUnitAssertionsShouldIncludeMessage"></exclude>
+        <exclude name="JUnitTestContainsTooManyAsserts"></exclude>
+        <exclude name="JUnitTestsShouldIncludeAssert"></exclude>
+        <exclude name="UseVarargs"></exclude>
+    </rule>
+
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateField">
+        <properties>
+            <property name="ignoredAnnotations" value="org.springframework.boot.test.mock.mockito.MockBean" />
+            <property name="ignoredAnnotations" value="lombok.Data" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod">
+        <properties>
+            <property name="ignoredAnnotations" value="javax.annotation.PostConstruct" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/codestyle.xml">
+       <exclude name="AtLeastOneConstructor"></exclude>
+       <exclude name="MethodArgumentCouldBeFinal"></exclude>
+       <exclude name="LocalVariableCouldBeFinal"></exclude>
+       <exclude name="ShortVariable"></exclude>
+       <exclude name="UnnecessaryLocalBeforeReturn"></exclude>
+       <exclude name="CallSuperInConstructor"></exclude>
+       <exclude name="GenericsNaming"></exclude><!-- https://stackoverflow.com/questions/2900881/generic-type-parameter-naming-convention-for-java-with-multiple-chars -->
+<!--       <exclude name="MethodArgumentCouldBeFinal"></exclude>-->
+        <exclude name="DefaultPackage" />
+        <exclude name="CommentDefaultAccessModifier" />
+        <exclude name="LinguisticNaming" />
+        <exclude name="MethodNamingConventions" />
+        <exclude name="LongVariable" />
+        <exclude name="UnnecessaryFullyQualifiedName" />
+        <exclude name="TooManyStaticImports" />
+        <exclude name="OnlyOneReturn" />
+        <exclude name="ConfusingTernary" />
+        <exclude name="UselessParentheses" />
+    </rule>
+    <rule ref="category/java/codestyle.xml/ShortClassName">
+        <properties>
+            <property name="minimum" value="4" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/design.xml">
+        <exclude name="LawOfDemeter"></exclude>
+        <exclude name="ImmutableField"></exclude>
+        <exclude name="AvoidUncheckedExceptionsInSignatures"></exclude>
+        <exclude name="LoosePackageCoupling"></exclude>
+        <exclude name="DataClass"></exclude>
+        <exclude name="AvoidCatchingGenericException"></exclude>
+        <exclude name="ExcessiveImports"></exclude>
+    </rule>
+
+    <rule ref="category/java/design.xml/TooManyFields">
+        <properties>
+            <property name="maxfields" value="20" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/design.xml/TooManyMethods">
+        <properties>
+            <property name="maxmethods" value="20" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/design.xml/CyclomaticComplexity">
+        <properties>
+            <property name="classReportLevel" value="160" />
+        </properties>
+    </rule>
+
+    <rule ref="category/java/design.xml/UseUtilityClass">
+        <properties>
+            <property name="ignoredAnnotations"
+                      value="org.springframework.boot.autoconfigure.SpringBootApplication"/>
+        </properties>
+    </rule>
+
+<!--    <rule ref="category/java/documentation.xml"/>-->
+    <rule ref="category/java/errorprone.xml">
+        <exclude name="BeanMembersShouldSerialize"></exclude>
+        <exclude name="DataflowAnomalyAnalysis"></exclude>
+        <exclude name="UseLocaleWithCaseConversions"></exclude>
+    </rule>
+
+    <rule ref="category/java/multithreading.xml">
+        <exclude name="UseConcurrentHashMap"></exclude>
+    </rule>
+
+    <rule ref="category/java/performance.xml">
+        <exclude name="AvoidUsingShortType"></exclude>
+    </rule>
+    <rule ref="category/java/security.xml"/>
+
+</ruleset>

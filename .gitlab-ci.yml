@@ -1,0 +1,86 @@
+cache:
+  key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
+  paths:
+    - .m2/repository
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+
+stages:
+  - build
+  - test
+  - pmd
+  - build_image
+  - update_deployments
+
+build_backend:
+  tags:
+    - kubernetes
+  stage: build
+  image: maven:3-jdk-11
+  script:
+    - mvn clean install -DskipTests=true -Dpmd.skip=true
+  artifacts:
+    when: on_success
+    paths:
+      - app.log
+      - target/*.jar
+    expire_in: 24 hrs
+
+test_backend:
+  tags:
+    - kubernetes
+  stage: test
+  image: maven:3-jdk-11
+  script:
+    - mvn test -P unit -Dpmd.skip=true
+  artifacts:
+    when: on_success
+    paths:
+      - app.log
+    expire_in: 24 hrs
+
+pmd:
+  tags:
+    - kubernetes
+  stage: pmd
+  image: maven:3-jdk-11
+  script:
+    - mvn pmd:check
+  artifacts:
+    when: on_failure
+    paths:
+      - target/pmd.xml
+    expire_in: 24 hrs
+
+build_image:
+  tags:
+    - kubernetes
+    - privileged
+  stage: build_image
+  when: manual
+  image: docker:dind
+  services:
+    - name: docker:dind
+      command: ["--tls=false"]
+  variables:
+    DOCKER_DRIVER: overlay
+    DOCKER_HOST: tcp://localhost:2375
+    DOCKER_TLS_CERTDIR: ""
+    IMAGE_TAG: $CI_REGISTRY/$CI_BACKEND_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cp target/*.jar ./
+    - mv ./ci/docker/Dockerfile ./
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+
+update_deployments:
+  tags:
+    - kubernetes
+  stage: update_deployments
+  when: manual
+  image: alpine/k8s:1.20.4
+  script:
+    - export KUBECONFIG=$KUBE_CONFIG_FILE
+    - kubectl rollout restart deployment/$KUBE_BACKEND_DEPLOYMENT -n $KUBE_NAMESPACE

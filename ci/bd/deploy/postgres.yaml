@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+  serviceName: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      imagePullSecrets:
+        - name: docker-hub
+      containers:
+        - name: postgres
+          image: registry.xrm.ru/planner/ng-docker-postgres:latest
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+          volumeMounts:
+            - name: planner
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: planner
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim

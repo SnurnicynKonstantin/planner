@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: pl-ingress
+spec:
+  rules:
+    - host: "planner.com" # Имя хоста
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: pl-frontend # Имя сервиса, на который перенаправлять запрос
+              servicePort: 80 # Порт сервиса, на который перенаправлять запрос
+          - path: /api
+            backend:
+              serviceName: pl-backend
+              servicePort: 80

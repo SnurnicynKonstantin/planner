@@ -1,0 +1,4 @@
+apiVersion: v1
+description: webui
+name: pl # Наименование Chart-а
+version: 0.1.0 # Версия Chart-а

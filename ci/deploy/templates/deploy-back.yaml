@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service # Тип создаваемого ресурса Service
+metadata:
+  name: pl-backend # Имя сервиса
+spec:
+  type: LoadBalancer
+  selector:
+    app: pl-backend # Метка, которую должны иметь Pod-ы, на которые перенаправляет запросы Service
+  ports:
+    - protocol: TCP
+      port: 80 # Порт, который прослушивает Service
+      targetPort: 8080 # Порт, на который Service перенаправляет запрос
+      name: http
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pl-backend
+  labels:
+    app: pl-backend
+spec:
+  strategy:
+    type: RollingUpdate # Стратегия обновления RollingUpdate
+    rollingUpdate:
+      maxSurge: 1 # Количество pod-ов, превосходящее число, указанное в поле replicas в момент обновления
+      maxUnavailable: 0 # Количество pod-ов, которые могут быть недоступны в момент обновления
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pl-backend
+  template:
+    metadata:
+      labels:
+        app: pl-backend
+    spec:
+      imagePullSecrets:
+        - name: docker-hub
+      containers:
+        - name: backend-pod-image
+          image: registry.xrm.ru/planner/ng-docker-backend:latest
+          imagePullPolicy: "Always"
+          env:
+            - name: POSTGRES
+              value: {{.Values.postgres}}
+            - name: HOST
+              value: {{.Values.host}}
